@@ -6,6 +6,7 @@ namespace hinos.player {
     public class PlayerController : MonoBehaviour {
         [SerializeField] private CharacterController character;
 
+
         private Vector2 direction;
 
         private PlayerCharacter playerCharacter;
@@ -24,19 +25,17 @@ namespace hinos.player {
         public void OnMove(InputAction.CallbackContext context) {
             direction = context.ReadValue<Vector2>();
         }
+
+        public void OnAttack(InputAction.CallbackContext context) {
+
+        }
     }
 
     public class PlayerCharacter {
-        private readonly CharacterController characterController;
-        private readonly CharacterMovement characterMovement;
+        private GameObject source;
 
-        public PlayerCharacter(CharacterController characterController) {
-            this.characterController = characterController;
-            this.characterMovement = characterController.GetComponent<CharacterMovement>();
-        }
-
-        public void SetMoveDirection(Vector3 direction) {
-            characterMovement.inputDirection = direction;
+        public PlayerCharacter(GameObject source){
+            
         }
     }
 }

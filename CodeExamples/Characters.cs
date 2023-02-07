@@ -28,6 +28,10 @@ namespace hinos.characters {
         private void Awake() {
             myMovement = GetComponent<CharacterMovement>();
         }
+
+        public void MoveTowards(Vector3 direction) {
+            
+        }
     }
 
     public class CharacterState : IState<CharacterController> {

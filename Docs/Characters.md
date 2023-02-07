@@ -2,19 +2,7 @@
 
 ## Stat Attributes
 
-### Tiers
 
-Some stat attributes are represented by tiers going from F (the lowest) to S (the highest).
-
-| Tier | Modifier | Description |
-| --- | --- | --- |
-| S | 2.0 | The highest possible tier. |
-| A | 1.5 |The target displays an exceptional ability within this stat. |
-| B | 1.2 |
-| C | 1.0 | The middle tier. |
-| D | 0.9 | |
-| E | 0.7 | |
-| F | 0.4 | The lowest possible tier. |
 
 | Type | Range | Definition |
 | --- | --- | --- |
@@ -35,3 +23,11 @@ There are base classes, which can evolve into advanced classes. each class can u
 | Scholar | |
 
 Novice, Knight, Spellsword, Cleric, Paladin, Mage, Explorer, Ranger, Monk, Ninja, Thief, Barbarian, 
+
+what are concepts we can build classes around?
+- Damage: Skills oriented around doing more damage.
+- Protective: skills oriented around damage mitigation.
+- Healing: skills oriented around healing party members health and removing ailments.
+- Harmonic Support: helping the player by increasing party stats
+- Disruptive Support: helping the player by decreasing enemy stats
+- Explorative: Skills that help by increasing luck, so the player finds more and better materials.
