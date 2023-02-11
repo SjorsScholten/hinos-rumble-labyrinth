@@ -26,6 +26,7 @@ namespace hinos.statusConditions {
 
         public virtual void Upgrade(StatusCondition condition) {
             this.stack += condition.stack;
+            lifeTime = 0f;
         }
     }
 

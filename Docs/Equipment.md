@@ -1,4 +1,4 @@
-# Equipement
+# Equipment
 
 Each character has a set of equipment containing out of a weapon, an armor piece, and a trinket.
 
@@ -12,7 +12,7 @@ There are ... different types of weapons.
 - Swords
 - Artifacts
 
-#### Weapon Proficiency
+### Weapon Proficiency
 Each character will have a proficiency tier for each weapon. The proficiency tier is based on the class and skills of the character.
 
 ### Weapon Proficiency Requirement

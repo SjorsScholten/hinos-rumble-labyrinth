@@ -40,6 +40,20 @@ namespace hinos.ItemSystem {
         }
     }
 
+    public class EquipableItemInstance : ItemInstance {
+
+        public void Equip(){
+
+        }
+    }
+
+    public class UsableItemInstance : ItemInstance {
+
+        public void Use() {
+
+        }
+    }
+
     public class ItemContainer : MonoBehaviour {
         [SerializeField] private List<ItemInstance> items;
 
@@ -77,6 +91,8 @@ namespace hinos.ItemSystem {
 
     public class ItemGridDisplay : MonoBehaviour {
         private ItemGridDisplayCell[] cells;
+
+
     }
 
     public class ItemGridDisplayCell : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler {
