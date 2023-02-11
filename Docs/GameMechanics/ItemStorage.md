@@ -18,17 +18,17 @@ Base storage is a larger item container that the player can use to store items f
 - As a Player, I have a primary storage, so I can collect a bunch of items.
 - As a Player, I want to discard items from my storage, so I can make space for new items.
 
-.
+<br>
 
 - As a Player, I will get items from interacting with loot containers, so there is a desire to search for them.
 - As a Player, I will get items from killing monsters, so I feel like there is a risk reward for defeating them.
 
-.
+<br>
 
 - As a Player, I have an alternate storage, so I can keep important items safe when I'm exploring the labyrinth.
 - As a Player, I will lose an amount of items from my primary storage when I perish in a dungeon, so I have to take a risk on what items I want to take with me.
 
-.
+<br>
 
 - As a Player, I have limited slots in my storage, so I have to make a decision on which items I want to keep and which items I will have to let go.
 - As a Player, I want to upgrade my storage, so I can take more items with me without having to make a decision. 

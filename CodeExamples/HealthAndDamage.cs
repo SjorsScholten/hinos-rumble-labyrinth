@@ -1,12 +1,6 @@
 using UnityEngine;
 
 namespace hinos.damage {
-    public class ElementType : ScriptableObject {
-        [SerializeField] private string elementName;
-
-        public string Name => elementName;
-    }
-
     public interface IDamageable {
         void ApplyDamage(float amount, ElementType element);
     }
@@ -45,24 +39,20 @@ namespace hinos.damage {
         }
     }
 
-    public class LivingEntity : MonoBehaviour {
-        [SerializeField] private float maxValue;
-        private float value;
+    public class DamageInfo {
+        public float value;
+        public ElementData type;
+        public float accumulationModifier;
+    }
 
-        public void ApplyValue(float value) {
-            var diff = this.value + value;
+    public class DamageProcessor : MonoBehaviour {
 
-            if(diff > maxHealth) {
-                health = maxHealth;
-                return diff - maxHealth;
-            }
+        public void ApplyDamage(DamageInfo damage) {
 
-            else if(diff < 0) {
-                health = 0;
-                return diff;
-            }
-
-            return 0;
         }
+    }
+
+    public class Health : MonoBehaviour {
+        public float value;
     }
 }

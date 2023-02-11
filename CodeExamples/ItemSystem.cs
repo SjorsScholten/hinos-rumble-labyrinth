@@ -58,8 +58,25 @@ namespace hinos.ItemSystem {
         }
     }
 
+    [RequireComponent(typeof(ItemContainer))]
+    public class PlayerInventoryController : MonoBehaviour {
+        private ItemContainer myItemContainer;
+
+        private void Awake() {
+            myItemContainer = GetComponent<ItemContainer>();
+        }
+
+        private void OnItemAdded() {
+            Debug.Log($"An item has been added to the inventory");
+        }
+
+        private void OnItemRemoved() {
+            Debug.Log($"An item has been removed from the inventory");
+        }
+    }
+
     public class ItemGridDisplay : MonoBehaviour {
-        private Dictionary<ItemSlot, int> slotToIndex = new();
+        private ItemGridDisplayCell[] cells;
     }
 
     public class ItemGridDisplayCell : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler {

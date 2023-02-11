@@ -9,7 +9,7 @@ namespace hinos.player {
 
         private Vector2 direction;
 
-        private PlayerCharacter playerCharacter;
+        private CharacterMovement cMovement;
         
 
         private void Awake() {
