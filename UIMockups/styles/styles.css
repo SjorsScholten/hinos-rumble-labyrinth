@@ -1,0 +1,30 @@
+.screen {
+    width: 1920px;
+    height: 1080px;
+
+    border: 1px solid black;
+}
+
+.screen-white {
+    padding: 10%;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.tab-group {
+    list-style-type: none;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: red;
+    
+}
+
+.tab-group .tab {
+    border: 1px solid black;
+}

@@ -7,3 +7,7 @@ The first section happens in the first half of the day, where the player can go 
 The second section is diving into the labyrinth or spending the day with a confidant.
 
 The third section is the aftermath of the labyrinth, the player can go into town to unwind with characters.
+
+A month is 10 days,
+A season is 3 months,
+A year is 4 seasons

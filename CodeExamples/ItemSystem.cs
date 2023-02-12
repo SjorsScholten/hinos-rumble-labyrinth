@@ -72,6 +72,49 @@ namespace hinos.ItemSystem {
         }
     }
 
+    public class ItemSlot {
+        private ItemInstance item;
+
+        public ItemSlot(ItemInstance item = null) {
+            this.item = item;
+        }
+
+        public void SetItem(ItemInstance item) {
+            this.item = item;
+        }
+
+        public static void Swap(ItemSlot a, ItemSlot b) {
+            var temp = a.item;
+            a.item = b.item;
+            b.item = temp;
+        }
+    }
+
+    public class Inventory {
+        private ItemSlot[] slots;
+
+        public void AddItem(ItemInstance item) {
+            //Get an emtpty slot and add the item;
+        }
+
+        public void RemoveItem(ItemInstance item) {
+            //Remove the item from the slot
+        }
+
+        public bool ContainsItem(ItemInstance item) {
+
+        }
+
+        public bool CanAddItem() {
+
+        }
+
+        public void SwapItemSlots(ItemSlot a, ItemSlot b) {
+            ItemSlot.Swap(a, b);
+
+        }
+    }
+
     [RequireComponent(typeof(ItemContainer))]
     public class PlayerInventoryController : MonoBehaviour {
         private ItemContainer myItemContainer;
