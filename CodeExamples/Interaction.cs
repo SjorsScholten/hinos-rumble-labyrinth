@@ -27,7 +27,7 @@ namespace hinos.interaction {
         }
     }
 
-    public class InteractableCollection : MonoBehaviour {
+    public class Interactor : MonoBehaviour {
         private List<Interactable> interactables = new();
 
         public List<Interactable> Interactables => interactables;
