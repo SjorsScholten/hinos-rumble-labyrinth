@@ -28,34 +28,6 @@ namespace hinos.player {
     }
 
     [System.Serializable]
-    public class Status {
-        private StatAttribute vitalityStat;
-
-        private StatAttribute mobilityStat;
-
-        private StatAttribute attackStat;
-        private StatAttribute accuracyStat;
-        private StatAttribute offensiveCriticalStat;
-
-        private StatAttribute defenseStat;
-        private StatAttribute evasionStat;
-        private StatAttribute vulnerabilityStat;
-        private StatAttribute heatResistanceStat;
-        private StatAttribute coldResistanceStat;
-        private StatAttribute kineticResistanceStat;
-        private StatAttribute staticResistanceStat;
-        private StatAttribute defensiveCriticalStat;
-
-        private float health;
-
-        public CharacterInstance(CharacterData data) {
-            this.data = data;
-        }
-
-
-    }
-
-    [System.Serializable]
     public class Loadout {
         private Armor armor;
         private Weapon weapon;

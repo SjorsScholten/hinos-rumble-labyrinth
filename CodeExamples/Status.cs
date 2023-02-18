@@ -43,7 +43,7 @@ namespace hinos.status {
         }
 
         public StatAttribute GetResistance(ElementData element) {
-            if(!resistanceStats.TryGetValue(element, out var stat)){
+            if(resistanceStats.TryGetValue(element, out var stat)){
                 return stat;
             }
             else {
@@ -194,7 +194,7 @@ namespace hinos.status {
         }
 
         public void HandleBurnDamage() {
-            status.health - 
+            status.health -= 
         }
     }
     
@@ -206,6 +206,7 @@ namespace hinos.status {
         [SerializeField] private ElementData burnElement;
         [SerializeField] private float burnThreshold;
         public bool canBurn = true;
+        public bool isBurning = false;
 
         private BurnStatusController controller;
 
@@ -220,6 +221,18 @@ namespace hinos.status {
                     isBurning = true;
                 }
             }
+
+            if(isBurning) {
+                controller.HandleBurnDamage();
+            }
+        }
+
+        private void ProcessBurnApplication() {
+
+        }
+
+        private void ProcessBurnTick() {
+
         }
     }
 
