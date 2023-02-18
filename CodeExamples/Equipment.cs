@@ -1,21 +1,39 @@
 namespace hinos.equipment {
-    public class EquipmentType : ScriptableObject {
-        [SerializeField] private string displayName;
-        [SerializeField] private Sprite icon;
 
-        public string DisplayName => displayName;
-        public Sprite Icon => icon;
-    }
-
-    public class EquipmentItemData : ItemData {
-        [SerializeField] private EquipmentType type;
+    public class Equipment_ItemInstance : ItemInstance {
+        
     }
 
     public class Equipment {
+        private List<EquipmentSlot> slots = new();
 
+        public void AddSlot(EquipmentSlot slot) {
+
+        }
+
+        public void GetSlot() {
+
+        }
     }
 
     public class EquipmentSlot {
-        public 
+        private ItemType type;
+        private Equipment_ItemInstance item;
+    }
+
+    public class EquipmentController {
+
+    }
+
+    public class EquipmentGUI : MonoBehavior {
+
+    }
+
+    public class EquipmentSlotGUI : MonoBehavior {
+
+    }
+
+    public class EquipmentItemDisplayGUI : MonoBehavior {
+
     }
 }

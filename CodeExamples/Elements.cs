@@ -1,6 +1,11 @@
 using UnityEngine;
 
 namespace hinos.elements {
+
+    // ################################
+    // Data Objects
+    // ################################
+
     public class ElementData : ScriptableObject {
         [SerializeField] private string displayName;
         [SerializeField] private Color color;
@@ -11,36 +16,39 @@ namespace hinos.elements {
         public Sprite Icon => icon;
     }
 
-    public class ElementAccumulator : MonoBehaviour {
-        [SerializeField] private ElementData data;
-        public float value;
+    // ################################
+    // Interfaces
+    // ################################
 
-        private void Update() {
-            value -= Time.deltaTime;
-        }
+    public interface IEnergyAccumulator {
+        void AccumulateEnergy(ElementData element, float amount);
     }
 
-    public class AccumulatorManager : MonoBehaviour {
-        private readonly Dictionary<ElementData, ElementAccumulator> accumulatorTable = new();
+    // ################################
+    // Components
+    // ################################
 
-        private void Awake() {
-            Initialize();
-        }
+    public class EnergyPatch : MonoBehavior {
+        [SerializeField] private float transferAmount;
+        [SerializeField] private ElementData data;
 
-        public void Initialize() {
-            var accumulators = GetComponents<ElementAccumulator>();
-            for(var i = 0; i < accumulators.Length; ++i) {
-                accumulatorTable.TryAdd(accumulators[i].element, accumulators[i])
+        private void OnTriggerEnter(Collider other) {
+            var accumulator = other.GetComponent<IEnergyAccumulator>();
+            if(accumulator != null) {
+                ProcessEnergyTransfer(accumulator);
             }
         }
 
-        public ElementAccumulator GetAccumulatorOfElement(ElementData element) {
-            if(accumulatorTable.TryGetValue(element, out var result)){
-                return result;
+        private void OnTriggerStay(Collider other) {
+            var accumulator = other.GetComponent<IEnergyAccumulator>();
+            if(accumulator != null) {
+                ProcessEnergyTransfer(accumulator);
             }
-            else {
-                return null;
-            }
+        }
+
+        private void ProcessEnergyTransfer(IEnergyAccumulator accumulator) {
+            var amount = transferAmount * Time.deltaTime;
+            accumulator.AccumulateEnergy(element, amount);
         }
     }
 }

@@ -1,5 +1,14 @@
 namespace hinos.itemSystem {
-    
+    /*
+        Script example for exploring item and inventory management
+
+
+    */
+
+    // ####################################
+    // Builder pattern
+    // ####################################
+
     public class ItemInstanceBuiler {
         private ItemInstanceTemplate template;
 
@@ -13,28 +22,88 @@ namespace hinos.itemSystem {
         public ItemRarity rarity;
     }
 
+    // ###################################
+    // Data objects
+    // ###################################
+
+    public class ItemData : ScriptableObject {
+        [SerializeField] private string displayName;
+        [SerializeField] private string description;
+        [SerializeField] private Sprite icon;
+
+        public string DisplayName => displayName;
+        public string Description => description;
+        public Sprite Icon => icon;
+    }
+
+    public class ItemRarity : ScriptableObjects {
+        [SerializeField] private string rarityName;
+        [SerializeField] private int rarityValue;
+        [SerializeField] private Color rarityColor;
+
+        public string Name => rarityName;
+        public int Value => rarityValue;
+        public Color Color => rarityColor;
+    }
+
+    public class ItemType : ScriptableObject {
+        [SerializeField] private string typeName;
+        [SerializeField] private Sprite typeIcon;
+
+        public string Name => itemName;
+        public Sprite Icon => typeIcon;
+    }
+
+    // ###################################
+    // Domain Models
+    // ###################################
+
     [System.Serializable]
     public class ItemInstance {
         private ItemData data;
         private ItemRarity rarity;
     }
 
+    public class Equipable_ItemInstance : ItemInstance, IUseable {
+
+        public void Use() {
+
+        }
+
+        public void Equip() {
+
+        }
+    }
+
+    public class Consumable_ItemInstance : ItemInstance, IUseable {
+
+        public void Use() {
+
+        }
+
+        public void Consume() {
+
+        }
+    }
+
     [System.Serializable]
     public class ItemContainer {
-        private ItemInstance[] items;
+        private List<ItemContainer> items = new();
+
+        public IReadOnlyCollection<ItemContainer> Items => items.AsReadOnly();
 
         public event Action<ItemInstance> OnSlotChangedEvent;
 
         public void AddItem(ItemInstance item){
-
+            items.Add(item);
         }
 
         public void RemoveItem(ItemInstance item) {
-
+            items.RemoveItem();
         }
 
         public ItemInstance GetItemAtIndex(int index){
-            if(index < items.Length){
+            if(index < items.Count){
                 return items[index];
             }
             else {
@@ -43,6 +112,10 @@ namespace hinos.itemSystem {
         }
     }
 
+    // #################################
+    // Controllers
+    // #################################
+
     public class InventoryController {
         public ItemContainer container;
 
@@ -50,34 +123,39 @@ namespace hinos.itemSystem {
             container.RemoveItem(item);
         }
 
-        public void SwapItem(ItemInstance item) {
-
-        }
-
         public void SaveContainer() {
 
         }
     }
 
-    public class InventoryGUI : MonoBehaviour {
+    public class StorageController {
+        public ItemContainer container;
+
+    }
+
+    public class EquipmentController {
+        public ItemContainer container;
+    }
+
+    // #######################################
+    // Views
+    // #######################################
+
+    public class InventoryGUI : MonoBehaviour, ICancelHandler {
         private InventoryController controller;
         public ItemContainer itemContainer;
 
         public ItemSlotGUI[] slots;
-        public ItemPointer pointer;
+        public ItemDisplay display;
 
-        private int currentPage = 0;
-
-        private void Update() {
-            if()
-        }
+        // private int currentPage = 0;
 
         public void OnOpenInventory() {
-            this.gameObject.SetActive(true);
+            ProcessOpenInventory();
         }
 
-        public void OnCloseInventory() {
-            this.gameObject.SetActive(false);
+        public void OnCancel(BaseEventData eventData) {
+            ProcessCloseInventory();
         }
 
         private void ProcessUIRefresh() {
@@ -87,9 +165,13 @@ namespace hinos.itemSystem {
                 slots[i].SetItem(items[i]);
             }
         }
-        
-        private void ProcessMovePointer(){
-            pointer.transform.position
+
+        private void ProcessOpenInventory() {
+            this.gameObject.SetActive(true);
+        }
+
+        private void ProcessCloseInventory() {
+            this.gameObject.SetActive(false);
         }
 
         public void HandleSlotChanged(int slotIndex) {
@@ -97,51 +179,78 @@ namespace hinos.itemSystem {
                 slots[slotIndex].SetItem(itemContainer.GetItemAtIndex(slotIndex));
             }
         }
-
-        public void HandleBeginDragSlot(ItemSlotGUI slot) { 
-            pointer.SetItem(slot.item);
-            pointer.gameObject.SetActive(true);
-        }
-
-        public void HandleEndDragSlot(ItemSlotGUI slot) {
-            pointer.gameObject.SetActive(false);
-            pointer.SetItem(null);
-        }
     }
 
-    public class ItemSlotGUI : MonoBehavior, IBeginDragHandler, IDragHandler, IEndDragHandler {
+    public class ItemSlotGUI : MonoBehavior, ISubmitHandler, IPointerClickHandler {
         public TMPro_Text nameText;
         public Image itemImage;
 
-        public ItemInstance item;
+        private ItemInstance item;
 
-        public event Action<ItemSlotGUI> OnBeginDragSlotEvent;
+        public ItemInstance Item {
+            get => item;
+            set => SetItem(value);
+        }
 
         public void SetItem(ItemInstance item) {
-            Assert.NotNull(item);
+            if(item == null) {
+                Clear();
+                return
+            }
 
             this.item = item;
-
             nameText = item.data.DisplayName;
             itemImage = item.data.Icon;
         }
 
-        public void OnBeginDrag(PointerEventData eventData) {
-            var temp = OnBeginDragSlotEvent;
-            if (temp != null) {
-                temp(this);
-            }
+        public void Clear() {
+            this.item = null;
+            nameText.text = String.empty;
+            itemImage.sprite = null;
+        }
+
+        public void OnSubmit(BaseEventData eventData) {
+
+        }
+
+        public void OnPointerClick(PointerEventData eventData) {
+
+        }
+
+        private void ProcessItemSlotSelect() {
+
         }
     }
 
-    public class ItemPointer : MonoBehaviour {
-        public Image itemImage;
+    public class ItemDisplay : MonoBehavior {
+        [SerializeField] private Image itemImage;
+        [SerializeField] private TMPro_Text itemNameText;
+        [SerializeField] private TMPro_Text itemDescriptionText;
 
-        public ItemInstance item;
+        private ItemInstance displayedItem;
 
-        public void SetItem(ItemInstance item) {
-            this.item = item;
-            itemImage.sprite = item.data.icon;
+        public ItemInstance DisplayItem {
+            get => displayedItem;
+            set => SetDisplayItem(value);
+        }
+
+        public void SetDisplayItem(ItemInstance itemToDisplay) {
+            if(itemToDisplay == null) {
+                Clear();
+            }
+            else {
+                displayedItem = itemToDisplay;
+
+                itemImage.sprite = displayedItem.Data.Icon;
+                itemNameText.text = displayedItem.Data,DisplayName;
+                itemDescriptionText.text = displayedItem.Data.Description;
+            }
+        }
+
+        public void Clear() {
+            itemImage.sprite = null;
+            itemNameText.text = String.empty;
+            itemDescriptionText.text = String.empty;
         }
     }
 }

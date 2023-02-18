@@ -1,43 +1,17 @@
 using UnityEngine;
 
 namespace hinos.damage {
+    // ###################################
+    // Interfaces
+    // ###################################
+
     public interface IDamageable {
         void ApplyDamage(float amount, ElementType element);
     }
 
-    public class HitBox : MonoBehaviour, IDamageable {
-
-    }
-
-    public class CharacterData : ScriptableObject {
-        private float vitality;
-
-        private float baseHeatResistance;
-        private float baseColdResistance;
-        private float baseKineticResistance;
-        private float baseStaticRestistance;
-    }
-
-    public class CharacterInstance {
-        private Stat vitality;
-        private Stat damageMultiplier
-
-        private Dictionary<ElementType, Stat> resitances;
-
-        public CharacterInstance(CharacterData data) {
-            vitality = new Stat(data.Vitality)
-
-            resitances[ElementType] = new Stat(data.HeatResistance);
-        }
-
-        public float GetResistance(ElementType type){
-            if(resitances.ContainsKey(type)) {
-                return heatResistanceStat.GetValue();
-            }
-
-            return 1;
-        }
-    }
+    // ###################################
+    // Domain Models
+    // ###################################
 
     public class DamageInfo {
         public float value;
@@ -45,14 +19,23 @@ namespace hinos.damage {
         public float accumulationModifier;
     }
 
-    public class DamageProcessor : MonoBehaviour {
+    // ###################################
+    // Controllers
+    // ###################################
 
-        public void ApplyDamage(DamageInfo damage) {
+    public class DamageController {
+        public Status status;
 
+        public void ApplyDamage(DamageInfo data) {
+            var defenseModifier = status.defenseStat.GetValue();
+            var resistanceModifier = 1f;
+
+            var resistance = status.GetResistance(data.element);
+            if(resistance != null) {
+                resistanceModifier = resistance.GetValue();
+            }
+
+            status.health -= data.damage * defenseModifier * resistanceModifier;
         }
-    }
-
-    public class Health : MonoBehaviour {
-        public float value;
     }
 }

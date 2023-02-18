@@ -19,26 +19,4 @@ namespace hinos.characters {
             this.data = CharacterData;
         }
     }
-
-    public class CharacterController : MonoBehaviour, IStateMachine<CharacterController> {
-        private CharacterInstance instance;
-
-        private CharacterMovement myMovement;
-
-        private void Awake() {
-            myMovement = GetComponent<CharacterMovement>();
-        }
-
-        public void MoveTowards(Vector3 direction) {
-            
-        }
-    }
-
-    public class CharacterState : IState<CharacterController> {
-
-    }
-
-    public class Death_CharacterState : CharacterState {
-        
-    }
 }

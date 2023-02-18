@@ -1,4 +1,8 @@
 namespace hinos.resources {
+    // ###################################
+    // Data Objects
+    // ###################################
+
     public class ResourceData : ScriptableObject {
         [SerializeField] private string dispayName;
         [SerializeField] private string description;
@@ -9,6 +13,10 @@ namespace hinos.resources {
         public Sprite Icon => icon;
     }
 
+    // ###################################
+    // Domain Models
+    // ###################################
+    
     [System.Serializable]
     public class ResourceInstance {
         private ResourceData data;

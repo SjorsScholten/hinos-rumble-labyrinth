@@ -1,4 +1,9 @@
 namespace hinos.player {
+
+    // ################################
+    // Data Objects
+    // ################################
+
     public class CharacterData : ScriptableObject {
         [SerializeField] private string displayName;
         [SerializeField] private string description;
@@ -9,10 +14,21 @@ namespace hinos.player {
         public string Description => description;
     }
 
-    [System.Serializable]
-    public class CharacterInstance {
-        private CharacterData data;
+    // ################################
+    // Domain Models
+    // ################################
 
+    [System.Serializable]
+    public class Player {
+        private Status status;
+        private Equipment equipment;
+
+        public Status Status => status;
+        public Equipment Equipment => equipment;
+    }
+
+    [System.Serializable]
+    public class Status {
         private StatAttribute vitalityStat;
 
         private StatAttribute mobilityStat;
@@ -52,6 +68,10 @@ namespace hinos.player {
         }
     }
 
+    // ################################
+    // Controllers
+    // ################################
+
     public class PlayerController {
         public CharacterInstance character;
         public Loadout loadout;
@@ -73,7 +93,11 @@ namespace hinos.player {
         }
     }
 
-    public class PlayerCharacter : MonoBehaviour, IStateMachine<PlayerCharacter> {
+    // ################################
+    // Views and Components
+    // ################################
+
+    public class PlayerCharacter : MonoBehaviour, IStateMachine<PlayerCharacter>, IEnergyAccumulationHandler {
         private PlayerController controller;
         public CharacterInstance character;
 
@@ -121,12 +145,20 @@ namespace hinos.player {
             }
         }
 
+        public void AccumulateEnergy(ElementData element, float amount) {
+
+        }
+
         public void SwitchState(State<PlayerCharacter> oldState, State<PlayerCharacter> newState) {
             oldState.Exit();
             newState.Enter();
             currentState = newState;
         }
     }
+
+    // ################################
+    // State
+    // ################################
 
     public class PlayerStateFactory {
         private readonly PlayerIdleState idleState;
@@ -169,4 +201,10 @@ namespace hinos.player {
         }
     }
 
+    public class PlayerStatusGUI : MonoBehaviour {
+
+        public void OnHealthChanged(float value) {
+            
+        }
+    }
 }
