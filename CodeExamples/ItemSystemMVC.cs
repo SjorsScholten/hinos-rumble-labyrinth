@@ -6,6 +6,64 @@ namespace hinos.itemSystem {
     */
 
     // ####################################
+    // Editor
+    // ####################################
+
+    public class BitFlagWindow : EditorWindow {
+        const string extension = ".cs";
+
+        public string[] flags = new string[32];
+
+        public int selectedFileIndex;
+        public string[] fileNames;
+        
+        [MenuItem("Hinos/BitFlags")]
+        public static void ShowWindow() {
+            EditorWindow.GetWindow(typeof(BitFlagWindow));
+        }
+
+        void OnGUI() {
+            // Left Aside
+            GUILayout.BeginVertical(GUILayout.ExpandHeight(true));
+            {   // File selection
+                GUILayout.BeginHorizontal(GUILayout.ExpandHeight(true));
+                
+                selectedFileIndex = GUILayout.SelectionGrid(selectedFileIndex, fileNames, 1, GUILayout.ExpandHeight(true));
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical(GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+            {
+
+            }
+            GUILayout.EndVertical();
+        }
+
+        private void WriteToEnum(string path, string name, ICollection<string> data) {
+            var fullPath = path + name + extension;
+
+            using(var file = File.CreateText(fullPath)){
+                var header = $$"""
+                [Flags]
+                public enum {{name}} {
+                    NONE = 0,
+                    {{data[1]}} = 1 << 0,
+                    {{}}
+                } 
+                file.WriteLine($"[Flags] \n public enum {name} \{ \n");
+
+                for(int i = 1, s = 0; i < flags.Count; i++, s++){
+
+                }
+                """
+            }
+
+            AssetDatabase.ImportAsset(fullPath);
+        }
+    }
+
+    // ####################################
     // Builder pattern
     // ####################################
 
@@ -30,6 +88,7 @@ namespace hinos.itemSystem {
         [SerializeField] private string displayName;
         [SerializeField] private string description;
         [SerializeField] private Sprite icon;
+        [SerializeField] private ItemType type;
 
         public string DisplayName => displayName;
         public string Description => description;
@@ -54,6 +113,21 @@ namespace hinos.itemSystem {
         public Sprite Icon => typeIcon;
     }
 
+    [Flags]
+    public enum ItemCategory {
+        NONE                = 0,
+        KEYITEM             = 1 << 0,
+        EQUIPMENT_ARMOR     = 1 << 1,
+        EQUIPMENT_WEAPON    = 1 << 2,
+        EQUIPMENT_TRINKET   = 1 << 3, 
+        MATERIAL            = 1 << 4,
+        CONSUMABLE          = 1 << 5
+    }
+
+    public class ItemCategory : ScriptableObject {
+
+    }
+
     // ###################################
     // Domain Models
     // ###################################
@@ -62,53 +136,42 @@ namespace hinos.itemSystem {
     public class ItemInstance {
         private ItemData data;
         private ItemRarity rarity;
-    }
 
-    public class Equipable_ItemInstance : ItemInstance, IUseable {
+        public ItemData Data => data;
+        public ItemRarity Rarity => rarity;
 
-        public void Use() {
-
-        }
-
-        public void Equip() {
-
+        public ItemInstance(ItemData data, ItemRarity rarity){
+            this.data = data;
+            this.rarity = rarity;
         }
     }
 
-    public class Consumable_ItemInstance : ItemInstance, IUseable {
+    [System.Serializable]
+    public class ItemSlot {
+        public ItemInstance item;
 
-        public void Use() {
+        public bool HasItem => (item != null);
 
-        }
-
-        public void Consume() {
-
+        public ItemSlot(ItemInstance item == null) {
+            this.item = item;
         }
     }
 
     [System.Serializable]
     public class ItemContainer {
-        private List<ItemContainer> items = new();
+        [SerializeField] private int size;
+        [SerializeField] private ItemSlot[] slots;
 
-        public IReadOnlyCollection<ItemContainer> Items => items.AsReadOnly();
-
-        public event Action<ItemInstance> OnSlotChangedEvent;
-
-        public void AddItem(ItemInstance item){
-            items.Add(item);
+        public ItemSlot this[int i] {
+            get => return slots[i];
         }
 
-        public void RemoveItem(ItemInstance item) {
-            items.RemoveItem();
+        public int Size {
+            get => this.size;
         }
 
-        public ItemInstance GetItemAtIndex(int index){
-            if(index < items.Count){
-                return items[index];
-            }
-            else {
-                return null;
-            }
+        public ItemContainer(int size) {
+            slots = new ItemSlot[size];
         }
     }
 
@@ -119,12 +182,30 @@ namespace hinos.itemSystem {
     public class InventoryController {
         public ItemContainer container;
 
-        public void DiscardItem(ItemInstance item) {
-            container.RemoveItem(item);
+        public InventoryController(ItemContainer container) {
+            this.container = container;
         }
 
-        public void SaveContainer() {
+        public bool TryAddItem(ItemInstance item) {
+            for(var i = 0; i < container.Size; i++){
+                if(container[i].HasItem) continue;
 
+                container[i].item = item;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryRemoveItem(ItemInstance item) {
+            for(var i = 0; i < container.size; i++) {
+                if(!container[i].item == item) continue;
+
+                container[i].item = null;
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -142,83 +223,59 @@ namespace hinos.itemSystem {
     // #######################################
 
     public class InventoryGUI : MonoBehaviour, ICancelHandler {
-        private InventoryController controller;
         public ItemContainer itemContainer;
+        private InventoryController controller;
 
-        public ItemSlotGUI[] slots;
+        public ItemSlotGUI[] itemSlotGUIs;
         public ItemDisplay display;
 
         // private int currentPage = 0;
 
+        public void Awake() {
+            controller = new InventoryController(itemContainer);
+        }
+
         public void OnOpenInventory() {
-            ProcessOpenInventory();
+            HandleOpenInventory();
         }
 
         public void OnCancel(BaseEventData eventData) {
-            ProcessCloseInventory();
+            HandleCloseInventory();
         }
 
         private void ProcessUIRefresh() {
-            var items = itemContainer.Items;
-            var minLength = Math.Min(slots.Length, items.Count);
-            for(var i = 0; i < minLength; i++) {
-                slots[i].SetItem(items[i]);
+            for(var i = 0; i < itemSlotGUIs.Length; i++) {
+                if(itemContainer[i].HasItem) {
+                    slots[i].DisplayItem(itemContainer[i].item);
+                }
+                else {
+                    slots[i].Clear();
+                }
             }
         }
 
-        private void ProcessOpenInventory() {
+        public void HandleOpenInventory() {
+            ProcessUIRefresh();
+
             this.gameObject.SetActive(true);
         }
 
-        private void ProcessCloseInventory() {
+        public void HandleCloseInventory() {
             this.gameObject.SetActive(false);
-        }
-
-        public void HandleSlotChanged(int slotIndex) {
-            if(slotIndex < slots.Length) {
-                slots[slotIndex].SetItem(itemContainer.GetItemAtIndex(slotIndex));
-            }
         }
     }
 
-    public class ItemSlotGUI : MonoBehavior, ISubmitHandler, IPointerClickHandler {
-        public TMPro_Text nameText;
+    public class ItemSlotGUI : MonoBehavior {
         public Image itemImage;
 
-        private ItemInstance item;
+        public void DisplayItem(ItemInstance item) {
+            Assert.NotNull(item);
 
-        public ItemInstance Item {
-            get => item;
-            set => SetItem(value);
-        }
-
-        public void SetItem(ItemInstance item) {
-            if(item == null) {
-                Clear();
-                return
-            }
-
-            this.item = item;
-            nameText = item.data.DisplayName;
             itemImage = item.data.Icon;
         }
 
         public void Clear() {
-            this.item = null;
-            nameText.text = String.empty;
             itemImage.sprite = null;
-        }
-
-        public void OnSubmit(BaseEventData eventData) {
-
-        }
-
-        public void OnPointerClick(PointerEventData eventData) {
-
-        }
-
-        private void ProcessItemSlotSelect() {
-
         }
     }
 
