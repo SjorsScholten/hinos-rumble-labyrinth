@@ -13,7 +13,7 @@ namespace hinos.agent {
         public Vector3 Position => myTransform.position;
         public Vector3 Heading => myTransform.forward;
         public Vector3 Velocity => myRigidbody.velocity;
-        public float Speed => speed
+        public float Speed => speed;
 
         private void Awake() {
             myTransform = GetComponent<Transform>();
@@ -121,7 +121,7 @@ namespace hinos.agent {
     public class Pursuit_SteeringBehaviour : SteeringBehaviour {
 
         public override Vector3 Calculate() {
-            return myAgent.Pursuit(myAgent.targetAgent)
+            return myAgent.Pursuit(myAgent.targetAgent);
         }
     }
 }

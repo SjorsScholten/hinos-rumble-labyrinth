@@ -47,7 +47,7 @@ namespace hinos.movement {
         }
 
         private void OnCollisionStay(Collision collision) {
-            EvaluateCollision(Collision)
+            EvaluateCollision(Collision);
         }
 
         private void EvaluateCollision(Collision collision) {
@@ -138,7 +138,7 @@ namespace hinos.movement {
         public override Vector3 CalculateVelocityChange() {
             var velocityChange = Vector3.zero;
             velocityChange += CharacterController.CalculateMovementAlongAxis(myCharacterController.velocity, maxSpeed, acceleration, Vector3.right, myCharacterController.ContactNormal);
-            velocityChange += CharacterController.CalculateMovementAlongAxis(myCharacterController.velocity, maxSpeed, acceleration, Vector3.forward, myCharacterController.contactNormal)
+            velocityChange += CharacterController.CalculateMovementAlongAxis(myCharacterController.velocity, maxSpeed, acceleration, Vector3.forward, myCharacterController.contactNormal);
             return velocityChange;
         }
     }
