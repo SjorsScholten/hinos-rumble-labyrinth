@@ -6,3 +6,6 @@ Every object that can be interacted with is highlighted by a white upside-down t
 
 A dialog action is represented by a text cloud.
 An inspect action is represented by a magnifying glass.
+
+- Get the interactable from the scene
+- call the interaction action on the object
