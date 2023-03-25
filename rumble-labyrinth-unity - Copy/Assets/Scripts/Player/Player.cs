@@ -21,6 +21,9 @@ namespace hinos.player
         [SerializeField] private LayerMask _interactionMask;
         private InteractionController _interactionController;
 
+        // Item Holding
+        private GameObject _holdItem;
+
         // Input
         [Space(), Header("Input Settings")]
         [SerializeField] private Transform _inputSpace;
@@ -114,6 +117,12 @@ namespace hinos.player
     public class DamageController
     {
 
+    }
+
+    public interface IHoldable
+    {
+        void OnHold(object source);
+        void OnDrop(object source);
     }
 }
 
