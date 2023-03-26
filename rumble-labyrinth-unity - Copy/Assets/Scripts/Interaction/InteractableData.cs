@@ -2,11 +2,12 @@ using UnityEngine;
 
 namespace hinos.interaction
 {
-    public readonly struct InteractableData
+    [System.Serializable]
+    public struct InteractableData
     {
-        public readonly GameObject gameObject;
-        public readonly Transform transform;
-        public readonly IInteractionHandler handler;
+        public GameObject gameObject;
+        public Transform transform;
+        public IInteractionHandler handler;
 
         public InteractableData(GameObject gameObject, Transform transform, IInteractionHandler handler) {
             this.gameObject = gameObject;

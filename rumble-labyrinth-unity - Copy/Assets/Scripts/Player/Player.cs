@@ -1,10 +1,11 @@
 using UnityEngine;
 using hinos.interaction;
+using hinos.items;
 
 namespace hinos.player
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class Player : MonoBehaviour, IDamageHandler
+    public class Player : MonoBehaviour
     {
         // Movement
         [Header("Movement Settings")]
@@ -20,9 +21,14 @@ namespace hinos.player
         [SerializeField] private Vector3 _interactionBoxSize;
         [SerializeField] private LayerMask _interactionMask;
         private InteractionController _interactionController;
+        private InteractableData[] _interactables = new InteractableData[5];
 
-        // Item Holding
-        private GameObject _holdItem;
+        // Item
+        [Space(), Header("Item Settings")]
+        [SerializeField] private ItemContainer _inventoryContainer;
+        [SerializeField] private ItemSlot _holdItemSlot = new();
+        private readonly ItemController _itemController = new();
+        //private ItemContainer _beltContainer = new();
 
         // Input
         [Space(), Header("Input Settings")]
@@ -57,6 +63,15 @@ namespace hinos.player
         private void Update() {
             _inputData = _inputController.RetrieveInputState(_actions);
             _targetVelocity = _inputController.TransformInputDirection(_inputSpace, _inputData.moveInputDirection) * _speed;
+
+            if(_inputData.stowInventoryRequested) {
+                _itemController.PutItemFromSlotInContainer(_holdItemSlot, _inventoryContainer);
+            }
+
+            var interact = true;
+            if (interact) {
+                ProcessInteraction();
+            }
         }
 
         private void FixedUpdate() {
@@ -67,62 +82,24 @@ namespace hinos.player
         }
 
         private void ProcessInteraction() {
-            var interactables = new InteractableData[3];
             var center = _transform.TransformPoint(_interactionOrigin);
             var halfExtends = _interactionBoxSize * 0.5f;
-            var count = _interactionController.QueryInteractables(center, halfExtends, interactables, _interactionMask);
-
+            var count = _interactionController.QueryInteractables(center, halfExtends, _interactables, _interactionMask);
+            Debug.Log(count);
             if(count > 0) {
-                _interactionController.SortInteractablesByDistance(_transform.position, interactables);
+                //_interactionController.SortInteractablesByDistance(_transform.position, _interactables);
 
                 if(_actions.Player.Interact.WasPressedThisFrame()) {
-                    _interactionController.BeginInteraction(this, interactables[0].handler);
+                    _interactionController.BeginInteraction(this, _interactables[0].handler);
                 }
             }
         }
 
-        public void HandleDamage(float damageAmount) {
-
-        }
-        
-    }
-
-    public interface IDamageHandler
-    {
-        void HandleDamage(float damageAmount);
-    }
-
-    public class PracticeTarget : MonoBehaviour, IDamageHandler
-    {
-
-        public void HandleDamage(float damageAmount) {
-            Debug.Log($"{this.gameObject.name} has been damaged for {damageAmount} points");
+        public void SetHoldItem(ItemInstance item) {
+            _holdItemSlot.Item = item;
         }
     }
 
-    public class DebugButton : MonoBehaviour, IInteractionHandler
-    {
-        [SerializeField] private bool _isInteractable;
-
-        public bool IsInteractable => _isInteractable;
-
-        public void HandleInteraction(object source) {
-            var mono = source as Component;
-            if(mono) {
-                Debug.Log($"{mono.gameObject.name} started interaction with {this.gameObject.name}");
-            }
-        }
-    }
-
-    public class DamageController
-    {
-
-    }
-
-    public interface IHoldable
-    {
-        void OnHold(object source);
-        void OnDrop(object source);
-    }
+    
 }
 

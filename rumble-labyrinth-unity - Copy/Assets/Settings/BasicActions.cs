@@ -62,6 +62,24 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""StowInventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""d10e2e07-c03f-4a59-b38d-00f35770ccbd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""StowBelt"",
+                    ""type"": ""Button"",
+                    ""id"": ""6f5db20b-7904-4914-ad43-56e402d0950d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -293,6 +311,28 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5aa76033-49e9-455e-a8e5-cb120139d1b6"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""StowInventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4ad76804-0052-4e86-97b5-50a8968e0c21"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""StowBelt"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -884,6 +924,8 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_StowInventory = m_Player.FindAction("StowInventory", throwIfNotFound: true);
+        m_Player_StowBelt = m_Player.FindAction("StowBelt", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -961,6 +1003,8 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Fire;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_StowInventory;
+    private readonly InputAction m_Player_StowBelt;
     public struct PlayerActions
     {
         private @BasicActions m_Wrapper;
@@ -969,6 +1013,8 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Fire => m_Wrapper.m_Player_Fire;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @StowInventory => m_Wrapper.m_Player_StowInventory;
+        public InputAction @StowBelt => m_Wrapper.m_Player_StowBelt;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -990,6 +1036,12 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @StowInventory.started += instance.OnStowInventory;
+            @StowInventory.performed += instance.OnStowInventory;
+            @StowInventory.canceled += instance.OnStowInventory;
+            @StowBelt.started += instance.OnStowBelt;
+            @StowBelt.performed += instance.OnStowBelt;
+            @StowBelt.canceled += instance.OnStowBelt;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1006,6 +1058,12 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @StowInventory.started -= instance.OnStowInventory;
+            @StowInventory.performed -= instance.OnStowInventory;
+            @StowInventory.canceled -= instance.OnStowInventory;
+            @StowBelt.started -= instance.OnStowBelt;
+            @StowBelt.performed -= instance.OnStowBelt;
+            @StowBelt.canceled -= instance.OnStowBelt;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1192,6 +1250,8 @@ public partial class @BasicActions: IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnStowInventory(InputAction.CallbackContext context);
+        void OnStowBelt(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

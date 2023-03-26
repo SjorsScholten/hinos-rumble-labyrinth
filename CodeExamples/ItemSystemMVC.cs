@@ -310,4 +310,34 @@ namespace hinos.itemSystem {
             itemDescriptionText.text = String.empty;
         }
     }
+
+    public interface IItemContainer
+    {
+        bool TryAddItem(Item item);
+    }
+
+    public interface IItemHandler
+    {
+        void HandleAddItem(Item item);
+    }
+
+    public class ItemContainerController
+    {
+        public void PutItemFromSlotInContainer(ItemSlot slot, IItemContainer container) {
+            if(container.TryAddItem(slot.item)) {
+                slot.item = null;
+            }
+        }
+
+        public void PutItemFromSlotInSlot(ItemSlot aSlot, ItemSlot bSlot) {
+            if(bSlot.item == null) {
+                bSlot.item = aSlot.item;
+                aSlot.item = null;   
+            }
+        }
+
+        public void SwapItemsBetweenSlots(ItemSlot aSlot, ItemSlot bSlot) {
+
+        }
+    }
 }

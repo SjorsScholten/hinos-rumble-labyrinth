@@ -1,23 +1,19 @@
-using System;
+using hinos.interaction;
+using hinos.player;
 using UnityEngine;
 
-namespace hinos.item
+namespace hinos.items
 {
-    public class HoldableItem : MonoBehaviour {
-        public bool droppable;
-        public bool stowable;
-        public bool throwable;
+    public class HoldableItem : MonoBehaviour, IInteractionHandler
+    {
+        public ItemInstance item;
+        public bool IsInteractable => true;
 
-        public bool CanBeDiscarded() {
-            return !droppable && !throwable;
-        }
-
-        public void HandleOnHold() {
-
-        }
-
-        public void HandleOnDrop() {
-
+        public void HandleInteraction(object source) {
+            var player = source as Player;
+            if(player) {
+                player.SetHoldItem(item);
+            }
         }
     }
 }
