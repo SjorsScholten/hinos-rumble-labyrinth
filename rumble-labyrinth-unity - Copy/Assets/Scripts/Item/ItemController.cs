@@ -2,7 +2,7 @@
 {
     public class ItemController
     {
-        public void PutItemFromSlotInContainer(ItemSlot slot, ItemContainer container) {
+        public static void PutItemFromSlotInContainer(ItemSlot slot, ItemContainer container) {
             if (slot.IsEmpty()) return;
 
             if (container.TryAddItem(slot.Item)) {

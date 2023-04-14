@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace hinos.items
 {
+    [System.Serializable]
     public class ItemContainer : MonoBehaviour
     {
         [SerializeField] private List<ItemSlot> _slots;

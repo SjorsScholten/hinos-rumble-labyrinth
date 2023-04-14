@@ -1,22 +1,18 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace hinos.player
 {
-    public class PlayerInputProcessor : MonoBehaviour {
+    public class PlayerInputProcessor : MonoBehaviour, BasicActions.IPlayerActions
+    {
         [SerializeField] private Transform _inputSpace = default;
-
         private BasicActions _actions;
-        private Vector2 _moveInput;
 
-
-        private Vector3 _moveDirection;
-
-        public Vector3 MoveDirection {
-            get => _moveDirection;
-        }
+        public Player _playerController;
 
         private void Awake() {
             _actions = new BasicActions();
+            _actions.Player.AddCallbacks(this);
         }
 
         private void OnEnable() {
@@ -27,30 +23,52 @@ namespace hinos.player
             _actions.Player.Disable();
         }
 
-        private void Update() {
-            PollInput();
-
-            ProcessMoveInput();
+        public Vector3 TransformInputDirection(Transform inputSpace, Vector2 inputDirection) {
+            var forward = GetSimpleProjectedDirection(inputSpace.forward);
+            var right = GetSimpleProjectedDirection(inputSpace.right);
+            return forward * inputDirection.y + right * inputDirection.x;
         }
 
-        private void PollInput() {
-            _moveInput = _actions.Player.Move.ReadValue<Vector2>();
-        }
-
-        private void ProcessMoveInput() {
-            if (_inputSpace) {
-                var forward = GetNormalizedInputDirection(_inputSpace.forward);
-                var right = GetNormalizedInputDirection(_inputSpace.right);
-                _moveDirection = forward * _moveInput.y + right * _moveInput.x;
-            }
-            else {
-                _moveDirection = new Vector3(_moveInput.x, 0, _moveInput.y);
-            }
-        }
-
-        private Vector3 GetNormalizedInputDirection(Vector3 direction) {
+        public Vector3 GetSimpleProjectedDirection(Vector3 direction) {
             direction.y = 0;
             return direction.normalized;
+        }
+
+        public void OnMove(InputAction.CallbackContext context) {
+            if (context.performed) {
+                var inputDirection = context.ReadValue<Vector2>();
+
+                Vector3 moveDirection;
+                if (_inputSpace) moveDirection = TransformInputDirection(_inputSpace, inputDirection);
+                else moveDirection = new Vector3(inputDirection.x, 0, inputDirection.y);
+                
+                _playerController.HandleMove(moveDirection);
+            }
+            else if(context.canceled) {
+                _playerController.HandleStopMoving();
+            }
+        }
+
+        public void OnLook(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnFire(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnInteract(InputAction.CallbackContext context) {
+            if(context.started) {
+                _playerController.HandleInteraction();
+            }
+        }
+
+        public void OnStowInventory(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnStowBelt(InputAction.CallbackContext context) {
+            
         }
     }
 }
